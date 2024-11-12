@@ -1,0 +1,394 @@
+DDL
+Switch to master database to create your new one 
+Multiple lines of comments.
+*/
+USE master;
+GO
+
+-- Drop and create the database
+IF EXISTS(SELECT name FROM sys.databases WHERE name = 'Space_Station')
+    DROP DATABASE [Space_Station];
+GO
+
+CREATE DATABASE [Space_Station];
+GO
+--Switch to database
+USE [Space_Station];
+GO
+
+/* ---------------------------CREATE ALL TABLES---------------------------------
+----------TABLE NAMES SHOULD NOT HAVE SPACES IN THEM FOR EASE IN REPORTING-----*/
+
+CREATE TABLE Category
+(
+    CategoryID char(10) PRIMARY KEY,
+    CategoryName varchar(50) NOT NULL
+);
+
+
+CREATE TABLE Memberships
+(
+	MembershipID char(10) PRIMARY KEY,
+	MembershipCategory varchar(50) NOT NULL, 
+	MembershipDate DATETIME NOT NULL
+);
+
+CREATE TABLE Customers
+(
+	CustomerID char(10) PRIMARY KEY,
+	Customer_Name varchar(50) NOT NULL,
+	Customer_Email varchar(100), 
+	Customer_Phone varchar(20),
+	MembershipID char(10),
+);
+
+CREATE TABLE Product
+(
+	ProductID char(10) PRIMARY KEY,
+	ProductName varchar(100) NOT NULL,
+	CategoryID char(10),
+	ReorderValue INT NOT NULL,
+	ProductPrice Decimal(10, 2) NOT NULL,
+);
+
+CREATE TABLE Orders
+(
+	OrderID char(10) PRIMARY KEY,
+	CustomerID char(10),
+	TotalSale DECIMAL(10,2) NOT NULL,
+	OrderDateTime DATETIME NOT NULL,
+);
+
+CREATE TABLE OrderDetails
+(
+	OrderDetailID char(10) PRIMARY KEY,
+	OrderID char(10),
+	ProductID char(10),
+	ProductQuantity INT NOT NULL,
+	Discount DECIMAL(10, 2),
+);
+
+
+
+CREATE TABLE Employees
+(
+	EmployeeID char(10) PRIMARY KEY,
+	EmployeeName varchar(50) NOT NULL,
+	EmployeeTitle varchar(50) NOT NULL
+);
+
+CREATE TABLE Observatory_Presentations
+(
+	EventID char(10) PRIMARY KEY,
+	EventName varchar(50) NOT NULL,
+	EventDateTime DATETIME NOT NULL
+);
+
+/*----------RUN SOME ALTER TALBE STATEMENTS TO SET THE FOREIGN KEY REFERENCES-----*/
+/* ------------------------------ALTER TABLES------------------------------------*/
+/* YOU CAN RUN THIS CODE AFTER INSERTING DATA INTO YOUR TABLES */
+
+--Orders
+ALTER TABLE Orders
+ADD CONSTRAINT FK_Orders_CustomerID
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);
+
+--OrderDetails	
+ALTER TABLE OrderDetails
+ADD CONSTRAINT FK_OrderDetails_OrderID
+FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
+
+ALTER TABLE OrderDetails
+ADD CONSTRAINT FK_OrderDetails_ProductID
+FOREIGN KEY (ProductID) REFERENCES Product(ProductID);
+
+--Product 
+ALTER TABLE Product
+ADD CONSTRAINT FK_Product_CategoryID
+FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+
+--FOREIGN KEY ESTABLISHMENT TO CUSTOMER TABLE
+ALTER TABLE Customers
+ADD CONSTRAINT FK_Customers_MembershipID
+FOREIGN KEY (MembershipID) REFERENCES Memberships(MembershipID)
+
+DML
+--SWITCH TO DATABASE
+USE Space_Station;		--CHANGE NAME TO YOUR STORE NAME, NO SPACES, BUT YOU CAN USE UNDERSCORES
+
+--INSERT RECORDS IN THE CORRECT ORDER, BASED ON DEPENDENCIES (PARENT BEFORE CHILD)
+
+--Categories
+INSERT INTO Category VALUES
+('01', 'Drones'),
+('02', 'Telescopes')
+
+
+--Memberships
+INSERT INTO Memberships (MembershipID, MembershipCategory, MembershipDate) VALUES 
+('MEM1', 'LoyaltyProgram', '1/1/2024'),
+('MEM2', 'SPACEPASS', '1/1/2024')
+
+--Customers
+INSERT INTO Customers (CustomerID, Customer_Name, Customer_Email, Customer_Phone, MembershipID) VALUES
+('1000', 'John Conklin', 'ajg@gmail.com', '602-759-5972', 'MEM1'),
+('1001', 'Bob Bob', 'bob@gmail.com', '111-1111', 'MEM1'),
+('1002', 'Cass Cass', 'cass@gmail.com', '222-2222', 'MEM1'),
+('1003', 'Dave Dave', 'dave@gmail.com', '333-3333', 'MEM1'),
+('1004', 'Ed Ed', 'ed@gmail.com', '444-4444', 'MEM1'),
+('1005', 'Frank Frank', 'frank@gmail.com', '555-5555', 'MEM1'),
+('1006', 'Geff Geff', 'geff@gmail.com', '666-6666', 'MEM1'),
+('1007', 'Henry Henry', 'henry@gmail.com', '777-7777', 'MEM1'), 
+('1008', 'Jon Jones', 'jon@gmail.com', '888-8888', 'MEM1'),
+('1009', 'Klay Klay', 'klay@gmail.com', '999-9999', 'MEM1'),
+('1010', 'Ant Ant', 'ant@gmail.com', '124-1342', 'MEM1'),
+('1011', 'Blay Blay', 'blay@gmail.com', '124-4644', 'MEM1'),
+('1012', 'Day Day', 'day@gmail.com', '134-2352', 'MEM1'),
+('1013', 'Fay Fay', 'fay@gmail.com', '135-4642', 'MEM1'),
+('1014', 'Jay Jay', 'jay@gmail.com', '563-4645', 'MEM1'),
+('1015', 'Mack Mack', 'mack@gmail.com', '464-3525', 'MEM1'),
+('1016', 'Julia Julia', 'julia@gmail.com', '353-2343', 'MEM1'),
+('1017', 'Marla Marla', 'marla@gmail.com', '352-6464', 'MEM1'),
+('1018', 'Karla Karla', 'karla@gmail.com', '235-4645', 'MEM1'),
+('1019', 'Jarla Jarla', 'jarla@gmail.com', '234-2222', 'MEM1'),
+('1020', 'Parla Parla', 'parla@gmail.com', '234-4653', 'MEM1')
+
+--Products
+INSERT INTO Product (ProductID, ProductName, CategoryID, ReorderValue, ProductPrice) VALUES
+('PROD1', 'Drone1', '01', 10, 1000.00),
+('PROD2', 'Drone2', '01', 10, 1000.00),
+('PROD3', 'Drone3', '01', 10, 1000.00),
+('PROD4', 'Drone4', '01', 10, 1000.00),
+('PROD5', 'Drone5', '01', 10, 1000.00),
+('PROD6', 'Drone6', '01', 10, 1000.00),
+('PROD7', 'Drone7', '01', 10, 1000.00),
+('PROD8', 'Drone8', '01', 10, 1000.00),
+('PROD9', 'Drone9', '01', 10, 1000.00),
+('PROD10', 'Drone10', '01', 10, 1000.00),
+('PROD11', 'Telescope1', '02', 10, 1000.00),
+('PROD12', 'Telescope2', '02', 10, 1000.00),
+('PROD13', 'Telescope3', '02', 10, 1000.00),
+('PROD14', 'Telescope4', '02', 10, 1000.00),
+('PROD15', 'Telescope5', '02', 10, 1000.00),
+('PROD16', 'Telescope6', '02', 10, 1000.00),
+('PROD17', 'Telescope7', '02', 10, 1000.00),
+('PROD18', 'Telescope8', '02', 10, 1000.00),
+('PROD19', 'Telescope9', '02', 10, 1000.00),
+('PROD20', 'Telescope10', '02', 10, 1000.00)
+
+
+-- Orders
+INSERT INTO Orders (OrderID, CustomerID, TotalSale, OrderDateTime) VALUES
+('ORDER1', '1000', 100.00, '1/1/2024'),
+('ORDER2', '1001', 200.00, '1/2/2024'),
+('ORDER3', '1002', 300.00, '1/3/2024'),
+('ORDER4', '1003', 400.00, '1/4/2024'),
+('ORDER5', '1004', 500.00, '1/4/2024'),
+('ORDER6', '1005', 600.00, '1/4/2024'),
+('ORDER7', '1006', 700.00, '1/4/2024'),
+('ORDER8', '1007', 800.00, '1/4/2024'),
+('ORDER9', '1008', 900.00, '1/4/2024'),
+('ORDER10', '1009', 1000.00, '1/1/2024'),
+('ORDER11', '1010', 1100.00, '1/1/2024'),
+('ORDER12', '1011', 1200.00, '1/2/2024'),
+('ORDER13', '1012', 1300.00, '1/2/2024'),
+('ORDER14', '1013', 1400.00, '1/2/2024'),
+('ORDER15', '1014', 1500.00, '1/3/2024'),
+('ORDER16', '1015', 1600.00, '1/3/2024'),
+('ORDER17', '1016', 1700.00, '1/3/2024'),
+('ORDER18', '1017', 1800.00, '1/3/2024'),
+('ORDER19', '1018', 1900.00, '1/3/2024'),
+('ORDER20', '1019', 2000.00, '1/3/2024')
+
+
+--OrderDetails
+INSERT INTO OrderDetails (OrderDetailID, OrderID, ProductID, ProductQuantity, Discount) VALUES 
+('DETAIL1', 'ORDER1', 'PROD1', 1, 0.00),
+('DETAIL2', 'ORDER2', 'PROD2', 1, 0.00),
+('DETAIL3', 'ORDER3', 'PROD3', 1, 0.00),
+('DETAIL4', 'ORDER4', 'PROD4', 1, 0.00),
+('DETAIL5', 'ORDER5', 'PROD5', 1, 0.00),
+('DETAIL6', 'ORDER6', 'PROD6', 1, 0.00),
+('DETAIL7', 'ORDER7', 'PROD7', 1, 0.00),
+('DETAIL8', 'ORDER8', 'PROD8', 1, 0.00),
+('DETAIL9', 'ORDER9', 'PROD9', 1, 0.00),
+('DETAIL10', 'ORDER10', 'PROD10', 1, 0.00),
+('DETAIL11', 'ORDER11', 'PROD11', 1, 0.00),
+('DETAIL12', 'ORDER12', 'PROD12', 1, 0.00),
+('DETAIL13', 'ORDER13', 'PROD13', 1, 0.00),
+('DETAIL14', 'ORDER14', 'PROD14', 1, 0.00),
+('DETAIL15', 'ORDER15', 'PROD15', 1, 0.00),
+('DETAIL16', 'ORDER16', 'PROD16', 1, 0.00),
+('DETAIL17', 'ORDER17', 'PROD17', 1, 0.00),
+('DETAIL18', 'ORDER18', 'PROD18', 1, 0.00),
+('DETAIL19', 'ORDER19', 'PROD19', 1, 0.00),
+('DETAIL20', 'ORDER20', 'PROD20', 1, 0.00)
+
+
+
+
+--Employees
+INSERT INTO Employees (EmployeeID, EmployeeName, EmployeeTitle) VALUES
+('EMP1', 'Bob Barker', 'Astronaut'),
+('EMP2', 'Bob Jones', 'Store Manager'),
+('EMP3', 'Dave Smith', 'Technician'),
+('EMP4', 'Joey Jones', 'Astronomer'),
+('EMP5', 'Ed Eddy', 'Observatory Coordinator')
+
+
+--ObservatoryPresentations
+INSERT INTO Observatory_Presentations (EventID, EventName, EventDateTime) VALUES
+('EVENT1', 'Galaxy Naming', '1/1/2024 20:00:00'),
+('EVENT2', 'Spacecraft Technology', '2/1/2024 12:00:00'),
+('EVENT3', 'Astronaut Speech', '3/1/2024 06:00:00'),
+('EVENT4', 'Observing Pluto', '4/1/2024 07:00:00'),
+('EVENT5', 'Observing Mars', '5/1/2024 08:00:00')
+
+
+
+
+
+UPDATE Product
+SET ProductPrice = 2500.00
+WHERE ProductID = 'PROD020'
+
+UPDATE Product
+SET ProductPrice = 3000.00
+WHERE ProductID = 'PROD19'
+
+UPDATE Product
+SET ProductPrice = 3500.00
+WHERE ProductID = 'PROD18'
+
+UPDATE Product
+SET ProductPrice = 4000.00
+WHERE ProductID = 'PROD17'
+
+DELETE FROM Orders
+WHERE OrderID = 'ORDER1' 
+
+Report SQL
+USE  	Space_Station		--CHANGE NAME TO YOUR STORE NAME, NO SPACES, BUT YOU CAN USE UNDERSCORES
+
+GO
+
+--CHECK TO SEE IF TABLE EXISTS AND IF SO, DROP AND RECREATE TABLE
+IF EXISTS(SELECT 1 
+                 FROM INFORMATION_SCHEMA.TABLES 
+                 WHERE TABLE_TYPE = 'BASE TABLE' 
+                 AND  TABLE_NAME = 'Crosstab')
+DROP TABLE Crosstab
+GO
+
+--CREATE TABLE FOR DEMONSTRATION PURPOSES
+
+CREATE TABLE Crosstab
+( Year      SMALLINT,
+  Quarter   TINYINT, 
+  Amount    DECIMAL(2,1) )
+
+GO
+--CHANGE THE VALUES FOR THE YEARS AND QUATERS AND ADD ADDITIONAL VALUES
+INSERT INTO Crosstab VALUES (2024, 1, 1.1)
+INSERT INTO Crosstab VALUES (2024, 2, 1.2)
+INSERT INTO Crosstab VALUES (2024, 3, 1.3)
+INSERT INTO Crosstab VALUES (2024, 4, 1.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.1)
+INSERT INTO Crosstab VALUES (2024, 2, 2.2)
+INSERT INTO Crosstab VALUES (2024, 3, 2.3)
+INSERT INTO Crosstab VALUES (2024, 4, 2.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.1)
+INSERT INTO Crosstab VALUES (2024, 2, 2.2)
+INSERT INTO Crosstab VALUES (2024, 3, 2.3)
+INSERT INTO Crosstab VALUES (2024, 4, 2.4)
+INSERT INTO Crosstab VALUES (2024, 2, 2.1)
+INSERT INTO Crosstab VALUES (2024, 2, 2.2)
+INSERT INTO Crosstab VALUES (2024, 1, 2.3)
+INSERT INTO Crosstab VALUES (2024, 3, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 2, 2.2)
+INSERT INTO Crosstab VALUES (2024, 1, 2.3)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+INSERT INTO Crosstab VALUES (2024, 1, 2.4)
+INSERT INTO Crosstab VALUES (2024, 3, 3.3)
+INSERT INTO Crosstab VALUES (2024, 2, 5.4)
+GO
+
+
+--SELECT the SUM of each quarter, grouped by year:
+--THIS IS THE ACTUAL CROSSTAB QUERY
+
+SELECT Year, 
+    SUM(CASE Quarter WHEN 1 THEN Amount ELSE 0 END) AS Q1,
+    SUM(CASE Quarter WHEN 2 THEN Amount ELSE 0 END) AS Q2,
+    SUM(CASE Quarter WHEN 3 THEN Amount ELSE 0 END) AS Q3,
+    SUM(CASE Quarter WHEN 4 THEN Amount ELSE 0 END) AS Q4
+FROM dbo.Crosstab
+GROUP BY Year
+GO
+
+
+
+--Total revenue (sales) per month, grouped by customer
+
+SELECT CustomerID, DATEPART(MONTH, OrderDateTime) AS OrderMonth, SUM(TotalSale) as Total_Revenue
+FROM Orders
+GROUP BY CustomerID, DATEPART(MONTH, OrderDateTime)
+
+
+
+--Total revenue (sales) per month, grouped by product
+
+
+SELECT OrderID, DATEPART(mm, [OrderDateTime]) AS OrderMonth, SUM([TotalSale]) as Total_Revenue
+FROM [dbo].[Orders]
+GROUP BY OrderID, DATEPART(MONTH, [OrderDateTime])
+
+
+-- Count of Orders by Customer
+
+SELECT CustomerID, COUNT(OrderID) as Order_Count
+FROM Orders
+GROUP BY CustomerID
+
+--Count of Products grouped by Category
+
+Select CategoryID, COUNT(ProductID) as Category_Count
+From Product
+Group BY CategoryID
+
+
+/*ADD TWO MORE*/
+
+SELECT MAX([OrderDateTime]) as MaxTransactionDate
+FROM Orders
+
+SELECT COUNT(CustomerID) as Customer_Count
+FROM Customers
+
+
+
+
+
+
+
+
+
